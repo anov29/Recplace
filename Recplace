@@ -1,0 +1,52 @@
+#!/bin/bash
+
+recursive=false
+verbose=false
+
+file=""
+original=""
+replace=""
+
+help()
+{
+    echo "Recplace is a utility program for finding and replacing a keyword"
+    echo "Usage: flags filename original replace"
+    echo "Flags: -h = help -v = verbose -r = recursive"
+    echo "No r flag: Non-recursive find and replace"
+    exit 0
+}
+ 
+if [ $# -eq 0 ]; then
+    help
+fi
+
+while getopts hvr o
+do  case "$o" in
+    h) help ;;
+    r) recursive=true ;;
+    v) verbose=true ;;      
+    
+    esac
+done
+shift "$((OPTIND-1))"
+
+file="$1"
+original="$2"
+replace="$3"
+
+if [ "$recursive" == "false" ] ; then
+    echo "Replacing $original with $replace in $file."
+    sed -i "s/$original/$replace/g" $file
+else
+    if [ "$verbose" == "true" ] ; then
+        echo "Recursively replacing $original with $replace in files:"
+        shopt -s globstar
+        for f in **/"$file"; do 
+            echo "$f"
+            sed -i "s/$original/$replace/g" "$f"
+        done
+    else
+        echo "Recursively replacing $original with $replace in **/$file."
+        find . -type f -name "$file" -print0 | xargs -0 sed -i'' -e "s/$original/$replace/g"
+    fi
+fi

@@ -1,2 +1,4 @@
 # Recplace
-A shell script that provides recursive replacing of keywords in specified files. 
+A shell script that provides recursive find and replace. 
+
+Originally created and tested in RHEL 8. 
